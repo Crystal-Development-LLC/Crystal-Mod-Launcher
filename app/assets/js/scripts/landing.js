@@ -10,7 +10,6 @@ const {URL}                   = require('url')
 const DiscordWrapper          = require('./assets/js/discordwrapper')
 const Mojang                  = require('./assets/js/mojang')
 const ProcessBuilder          = require('./assets/js/processbuilder')
-const ServerStatus            = require('./assets/js/serverstatus')
 
 // Launch Elements
 const launch_content          = document.getElementById('launch_content')
@@ -18,7 +17,6 @@ const launch_details          = document.getElementById('launch_details')
 const launch_progress         = document.getElementById('launch_progress')
 const launch_progress_label   = document.getElementById('launch_progress_label')
 const launch_details_text     = document.getElementById('launch_details_text')
-const server_selection_button = document.getElementById('server_selection_button')
 const user_text               = document.getElementById('user_text')
 
 const loggerLanding = LoggerUtil('%c[Landing]', 'color: #000668; font-weight: bold')
@@ -137,26 +135,6 @@ function updateSelectedAccount(authUser){
 }
 updateSelectedAccount(ConfigManager.getSelectedAccount())
 
-// Bind selected server
-function updateSelectedServer(serv){
-    if(getCurrentView() === VIEWS.settings){
-        saveAllModConfigurations()
-    }
-    ConfigManager.setSelectedServer(serv != null ? serv.getID() : null)
-    ConfigManager.save()
-    server_selection_button.innerHTML = '\u2022 ' + (serv != null ? serv.getName() : 'No Server Selected')
-    if(getCurrentView() === VIEWS.settings){
-        animateModsTabRefresh()
-    }
-    setLaunchEnabled(serv != null)
-}
-// Real text is set in uibinder.js on distributionIndexDone.
-server_selection_button.innerHTML = '\u2022 Loading..'
-server_selection_button.onclick = (e) => {
-    e.target.blur()
-    toggleServerSelection(true)
-}
-
 // Update Mojang Status Color
 const refreshMojangStatuses = async function(){
     loggerLanding.log('Refreshing Mojang Statuses..')
@@ -222,35 +200,11 @@ const refreshMojangStatuses = async function(){
 }
 
 const refreshServerStatus = async function(fade = false){
-    loggerLanding.log('Refreshing Server Status')
-    const serv = DistroManager.getDistribution().getServer(ConfigManager.getSelectedServer())
+}
 
-    let pLabel = 'SERVER'
-    let pVal = 'OFFLINE'
+// Bind selected server
+function updateSelectedServer(serv){
 
-    try {
-        const serverURL = new URL('my://' + serv.getAddress())
-        const servStat = await ServerStatus.getStatus(serverURL.hostname, serverURL.port)
-        if(servStat.online){
-            pLabel = 'PLAYERS'
-            pVal = servStat.onlinePlayers + '/' + servStat.maxPlayers
-        }
-
-    } catch (err) {
-        loggerLanding.warn('Unable to refresh server status, assuming offline.')
-        loggerLanding.debug(err)
-    }
-    if(fade){
-        $('#server_status_wrapper').fadeOut(250, () => {
-            document.getElementById('landingPlayerLabel').innerHTML = pLabel
-            document.getElementById('player_count').innerHTML = pVal
-            $('#server_status_wrapper').fadeIn(500)
-        })
-    } else {
-        document.getElementById('landingPlayerLabel').innerHTML = pLabel
-        document.getElementById('player_count').innerHTML = pVal
-    }
-    
 }
 
 refreshMojangStatuses()
@@ -328,7 +282,7 @@ function asyncSystemScan(mcVersion, launchAfter = true){
                 // Show this information to the user.
                 setOverlayContent(
                     'No Compatible<br>Java Installation Found',
-                    'In order to join WesterosCraft, you need a 64-bit installation of Java 8. Would you like us to install a copy? By installing, you accept <a href="http://www.oracle.com/technetwork/java/javase/terms/license/index.html">Oracle\'s license agreement</a>.',
+                    'You need a 64-bit installation of Java 8. Would you like us to install a copy? By installing, you accept <a href="http://www.oracle.com/technetwork/java/javase/terms/license/index.html">Oracle\'s license agreement</a>.',
                     'Install Java',
                     'Install Manually'
                 )
@@ -658,9 +612,6 @@ function dlAsync(login = true){
 
                 const onLoadComplete = () => {
                     toggleLaunchArea(false)
-                    if(hasRPC){
-                        DiscordWrapper.updateDetails('Loading game..')
-                    }
                     proc.stdout.on('data', gameStateChange)
                     proc.stdout.removeListener('data', tempListener)
                     proc.stderr.removeListener('data', gameErrorListener)
@@ -682,14 +633,10 @@ function dlAsync(login = true){
                     }
                 }
 
-                // Listener for Discord RPC.
                 const gameStateChange = function(data){
                     data = data.trim()
-                    if(SERVER_JOINED_REGEX.test(data)){
-                        DiscordWrapper.updateDetails('Exploring the Realm!')
-                    } else if(GAME_JOINED_REGEX.test(data)){
-                        DiscordWrapper.updateDetails('Sailing to Westeros!')
-                    }
+
+                    // might as well keep this even though it's not being used xd
                 }
 
                 const gameErrorListener = function(data){
@@ -708,20 +655,7 @@ function dlAsync(login = true){
                     proc.stdout.on('data', tempListener)
                     proc.stderr.on('data', gameErrorListener)
 
-                    setLaunchDetails('Done. Enjoy the server!')
-
-                    // Init Discord Hook
-                    const distro = DistroManager.getDistribution()
-                    if(distro.discord != null && serv.discord != null){
-                        DiscordWrapper.initRPC(distro.discord, serv.discord)
-                        hasRPC = true
-                        proc.on('close', (code, signal) => {
-                            loggerLaunchSuite.log('Shutting down Discord Rich Presence..')
-                            DiscordWrapper.shutdownRPC()
-                            hasRPC = false
-                            proc = null
-                        })
-                    }
+                    setLaunchDetails('Launching!')
 
                 } catch(err) {
 

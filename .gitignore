@@ -1,6 +1,4 @@
-/node_modules/
-/.vs/
-/.vscode/
-/target/
-/logs/
-/dist/
+src/node_modules/
+src/dist/
+/src/.idea/
+/.idea/workspace.xml

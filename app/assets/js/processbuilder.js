@@ -298,18 +298,6 @@ class ProcessBuilder {
 
     }
 
-    _processAutoConnectArg(args){
-        if(ConfigManager.getAutoConnect() && this.server.isAutoConnect()){
-            const serverURL = new URL('my://' + this.server.getAddress())
-            args.push('--server')
-            args.push(serverURL.hostname)
-            if(serverURL.port){
-                args.push('--port')
-                args.push(serverURL.port)
-            }
-        }
-    }
-
     /**
      * Construct the argument array that will be passed to the JVM process.
      * 
@@ -381,7 +369,7 @@ class ProcessBuilder {
 
         // Java Arguments
         if(process.platform === 'darwin'){
-            args.push('-Xdock:name=HeliosLauncher')
+            args.push('-Xdock:name=CrystalModLauncher')
             args.push('-Xdock:icon=' + path.join(__dirname, '..', 'images', 'minecraft.icns'))
         }
         args.push('-Xmx' + ConfigManager.getMaxRAM())
@@ -512,8 +500,6 @@ class ProcessBuilder {
         if(isAutoconnectBroken) {
             logger.error('Server autoconnect disabled on Forge 1.15.2 for builds earlier than 31.2.15 due to OpenGL Stack Overflow issue.')
             logger.error('Please upgrade your Forge version to at least 31.2.15!')
-        } else {
-            this._processAutoConnectArg(args)
         }
         
 
@@ -580,9 +566,6 @@ class ProcessBuilder {
                 }
             }
         }
-
-        // Autoconnect to the selected server.
-        this._processAutoConnectArg(mcArgs)
 
         // Prepare game resolution
         if(ConfigManager.getFullscreen()){
