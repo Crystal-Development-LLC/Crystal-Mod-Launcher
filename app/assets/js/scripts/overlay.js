@@ -170,24 +170,24 @@ function setDismissHandler(handler){
 
 /* Server Select View */
 
-document.getElementById('serverSelectConfirm').addEventListener('click', () => {
-    const listings = document.getElementsByClassName('serverListing')
-    for(let i=0; i<listings.length; i++){
-        if(listings[i].hasAttribute('selected')){
-            const serv = DistroManager.getDistribution().getServer(listings[i].getAttribute('servid'))
-            updateSelectedServer(serv)
-            refreshServerStatus(true)
-            toggleOverlay(false)
-            return
-        }
-    }
-    // None are selected? Not possible right? Meh, handle it.
-    if(listings.length > 0){
-        const serv = DistroManager.getDistribution().getServer(listings[i].getAttribute('servid'))
-        updateSelectedServer(serv)
-        toggleOverlay(false)
-    }
-})
+// document.getElementById('serverSelectConfirm').addEventListener('click', () => {
+//     const listings = document.getElementsByClassName('serverListing')
+//     for(let i=0; i<listings.length; i++){
+//         if(listings[i].hasAttribute('selected')){
+//             const serv = DistroManager.getDistribution().getServer(listings[i].getAttribute('servid'))
+//             updateSelectedServer(serv)
+//             refreshServerStatus(true)
+//             toggleOverlay(false)
+//             return
+//         }
+//     }
+//     // None are selected? Not possible right? Meh, handle it.
+//     if(listings.length > 0){
+//         const serv = DistroManager.getDistribution().getServer(listings[i].getAttribute('servid'))
+//         updateSelectedServer(serv)
+//         toggleOverlay(false)
+//     }
+// })
 
 document.getElementById('accountSelectConfirm').addEventListener('click', () => {
     const listings = document.getElementsByClassName('accountListing')
@@ -211,10 +211,10 @@ document.getElementById('accountSelectConfirm').addEventListener('click', () => 
     }
 })
 
-// Bind server select cancel button.
-document.getElementById('serverSelectCancel').addEventListener('click', () => {
-    toggleOverlay(false)
-})
+// // Bind server select cancel button.
+// document.getElementById('serverSelectCancel').addEventListener('click', () => {
+//     toggleOverlay(false)
+// })
 
 document.getElementById('accountSelectCancel').addEventListener('click', () => {
     $('#accountSelectContent').fadeOut(250, () => {
