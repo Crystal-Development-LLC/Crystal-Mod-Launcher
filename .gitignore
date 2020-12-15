@@ -2,3 +2,5 @@ src/node_modules/
 src/dist/
 /src/.idea/
 /.idea/workspace.xml
+/.idea/
+node_modules/
