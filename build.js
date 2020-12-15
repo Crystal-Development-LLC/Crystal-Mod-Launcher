@@ -19,8 +19,8 @@ builder.build({
     targets: (process.argv[2] != null && Platform[process.argv[2]] != null ? Platform[process.argv[2]] : getCurrentPlatform()).createTarget(),
     config: {
         appId: 'CrystalMod Launcher',
-        productName: 'CrystalMod_Launcher',
-        artifactName: '${productName}-setup-${version}.${ext}',
+        productName: 'CrystalMod-Launcher',
+        artifactName: '${productName}-Installer-${version}.${ext}',
         copyright: 'Copyright © 2020 Crystal Development, LLC.',
         directories: {
             buildResources: 'build',
