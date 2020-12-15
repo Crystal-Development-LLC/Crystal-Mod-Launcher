@@ -1,9 +1,9 @@
 {
   "name": "crystalmodlauncher",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "productName": "CrystalMod Launcher",
   "description": "Modded Minecraft Launcher",
-  "author": "Daniel Scalzi (https://github.com/dscalzi/), Crystal Development (https://github.com/Crystal-Development-LLC/)",
+  "author": "Crystal Development (https://github.com/Crystal-Development-LLC/)",
   "license": "UNLICENSED",
   "homepage": "https://github.com/Crystal-Development-LLC/Crystal-Mod-Launcher",
   "bugs": {
